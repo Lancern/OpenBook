@@ -11,17 +11,22 @@ use std::fmt::{Display, Formatter};
 /// variant;
 /// * Errors that come directly from OpenBook components, which are represented by the `Msg`
 /// variant.
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub enum Error {
+    /// Errors that originally come from a dependency of OpenBook.
     Inner(Box<dyn std::error::Error>),
+
+    /// Errors that directly come from OpenBook.
     Msg(String),
 }
 
 impl Error {
+    /// Create `Error` value from the specified inner error.
     pub fn from_inner<E: std::error::Error>(inner: E) -> Self {
         Self::Inner(Box::new(inner))
     }
 
+    /// Create `Error` value from the specified error message.
     pub fn from_message<M: Into<String>>(msg: M) -> Self {
         Self::Msg(msg.into())
     }
@@ -35,6 +40,8 @@ impl Display for Error {
         }
     }
 }
+
+impl std::error::Error for Error {}
 
 /// Result type used in OpenBook.
 pub type Result<T> = std::result::Result<T, Error>;
