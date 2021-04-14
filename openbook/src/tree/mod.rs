@@ -35,7 +35,8 @@
 //! [`Section`]: struct.Section.html
 //!
 
-pub mod builders;
+pub mod builder;
+pub mod visitor;
 
 use std::path::PathBuf;
 
