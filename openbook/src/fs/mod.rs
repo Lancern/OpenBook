@@ -35,19 +35,15 @@ pub trait FileSystem: Sync {
     type Watcher: FileSystemWatcher;
 
     /// Determine whether a normal file exists at the specified path in the file system.
-    fn has_file<P: AsRef<Path>>(&self, path: P) -> Result<bool>;
+    fn has_file<P: AsRef<Path>>(&self, path: P) -> bool;
 
     /// Determine whether a directory exists at the specified path in the file system.
-    fn has_dir<P: AsRef<Path>>(&self, path: P) -> Result<bool>;
+    fn has_dir<P: AsRef<Path>>(&self, path: P) -> bool;
 
     /// Determine whether a file or a directory exists at the specified path in the file system.
-    fn has_entry<P: AsRef<Path>>(&self, path: P) -> Result<bool> {
-        let f = self.has_file(path)?;
-        if f {
-            return Ok(true);
-        }
-
-        self.has_dir()
+    fn has_entry<P: AsRef<Path>>(&self, path: P) -> bool {
+        let path = path.as_ref();
+        self.has_file(path) || self.has_dir(path)
     }
 
     /// Read the whole content of the specified file as a string.

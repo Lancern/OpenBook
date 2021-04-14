@@ -30,12 +30,12 @@ impl FileSystem for LocalFileSystem {
 
     type Watcher = LocalFileSystemWatcher;
 
-    fn has_file<P: AsRef<Path>>(&self, path: P) -> Result<bool> {
-        Ok(path.as_ref().is_file())
+    fn has_file<P: AsRef<Path>>(&self, path: P) -> bool {
+        path.as_ref().is_file()
     }
 
-    fn has_dir<P: AsRef<Path>>(&self, path: P) -> Result<bool> {
-        Ok(path.as_ref().is_dir())
+    fn has_dir<P: AsRef<Path>>(&self, path: P) -> bool {
+        path.as_ref().is_dir()
     }
 
     fn read_file_as_string<P: AsRef<Path>>(&self, path: P) -> Result<String> {
