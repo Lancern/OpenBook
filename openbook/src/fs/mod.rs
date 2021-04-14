@@ -2,6 +2,7 @@
 //! operations needed by OpenBook.
 //!
 //! OpenBook requires the following operations to be supported by the file system:
+//! * Determine whether a file or a directory exists at a specified path;
 //! * Read a file;
 //! * List all files under a directory;
 //! * Watch for file changes. The following file system events will be watched:
@@ -32,6 +33,22 @@ pub trait FileSystem: Sync {
 
     /// Type of the file system watcher that emits events when the state of the file system changes.
     type Watcher: FileSystemWatcher;
+
+    /// Determine whether a normal file exists at the specified path in the file system.
+    fn has_file<P: AsRef<Path>>(&self, path: P) -> Result<bool>;
+
+    /// Determine whether a directory exists at the specified path in the file system.
+    fn has_dir<P: AsRef<Path>>(&self, path: P) -> Result<bool>;
+
+    /// Determine whether a file or a directory exists at the specified path in the file system.
+    fn has_entry<P: AsRef<Path>>(&self, path: P) -> Result<bool> {
+        let f = self.has_file(path)?;
+        if f {
+            return Ok(true);
+        }
+
+        self.has_dir()
+    }
 
     /// Read the whole content of the specified file as a string.
     fn read_file_as_string<P: AsRef<Path>>(&self, path: P) -> Result<String>;
