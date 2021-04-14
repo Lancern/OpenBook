@@ -7,7 +7,8 @@
 //! |- BookConfig { ... }
 //! |- Book [lang="en"]
 //! |  |- BookConfig { ... }
-//! |  |- Chapter [name="User Manual"]
+//! |  |- Section [preface, name="Preface"]
+//! |  |- Section [name="User Manual"]
 //! |  |  |- Section [name="What is OpenBook"]
 //! |  |  |- Section [name="How to use OpenBook"]
 //! |  |     |- Section [name="How to build"]
@@ -15,24 +16,26 @@
 //! |     |- Section [name="How to contribute"]
 //! |- Book [lang="zh"]
 //!    |- BookConfig { ... }
-//!    |- Chapter [name="用户手册"]
+//!    |- Section [preface, name="前言"]
+//!    |- Section [name="用户手册"]
 //!    |  |- Section [name="什么是 OpenBook"]
 //!    |  |- Section [name="如何使用 OpenBook"]
 //!    |     |- Section [name="如何构建"]
-//!    |- Chapter [name="开发者手册"]
+//!    |- Section [name="开发者手册"]
 //!       |- Section [name="如何贡献"]
 //! ```
 //!
 //! The root of the project tree is represented by [`GlobalizedBooks`] struct. It is a container for
 //! all books written in different languages. A book written in a specific language is represented
-//! by the [`Book`] struct. Each book has its own logical structure represented by [`Chapter`]s and
-//! [`Section`]s. In sections are the book's actual content.
+//! by the [`Book`] struct. Each book has its own logical structure represented by [`Section`]s. In
+//! sections are the book's actual content.
 //!
 //! [`GlobalizedBooks`]: struct.GlobalizedBooks.html
 //! [`Book`]: struct.Book.html
-//! [`Chapter`]: struct.Chapter.html
 //! [`Section`]: struct.Section.html
 //!
+
+pub mod builders;
 
 use std::path::PathBuf;
 
@@ -61,8 +64,11 @@ pub struct Book {
     /// configuration.
     pub config: BookConfig,
 
-    /// All chapters contained in this book.
-    pub chapters: Vec<Chapter>,
+    /// The preface section of this book.
+    pub preface: Section,
+
+    /// All sections contained in this book.
+    pub sections: Vec<Section>,
 }
 
 /// Book configuration.
@@ -142,21 +148,14 @@ impl Default for TextDirection {
     }
 }
 
-/// A chapter within a book.
-#[derive(Clone, Debug, Default)]
-pub struct Chapter {
-    /// Name of the chapter.
-    pub name: String,
-
-    /// All subsections in this chapter.
-    pub sections: Vec<Section>,
-}
-
 /// A section within a chapter.
 #[derive(Clone, Debug, Default)]
 pub struct Section {
-    /// Path to the file that contains the content in this section.
+    /// Path to the file that contains the content of this section.
     pub file: PathBuf,
+
+    /// Anchor of the start point of this section in the content file.
+    pub anchor: Option<String>,
 
     /// Name of the section.
     pub name: String,
